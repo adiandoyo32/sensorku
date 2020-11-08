@@ -4,23 +4,25 @@
     <AppBar />
     <v-main class="grey lighten-4">
       <v-container>
-        <router-view></router-view>
+        <transition>
+          <router-view />
+        </transition>
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import NavBar from '@/components/NavBar';
-import AppBar from '@/components/AppBar';
+import NavBar from "@/components/NavBar";
+import AppBar from "@/components/AppBar";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     NavBar,
-    AppBar
-  }
-}
+    AppBar,
+  },
+};
 </script>
 
 <style lang="scss" scoped>

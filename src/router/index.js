@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Sender from '../views/Sender.vue'
+import SenderTable from '../components/Sender/SenderTable.vue'
+import SenderDetail from '../components/Sender/SenderDetail.vue'
 
 Vue.use(VueRouter)
 
@@ -13,8 +15,19 @@ const routes = [
   },
   {
     path: '/senders',
-    name: 'Sender',
-    component: Sender
+    component: Sender,
+    children: [
+      {
+        path: '',
+        name: 'SenderTable',
+        component: SenderTable,
+      },
+      {
+        path: ':id',
+        name: 'SenderDetail',
+        component: SenderDetail,
+      },
+    ]
   },
   {
     path: '/about',
@@ -28,7 +41,8 @@ const routes = [
 
 const router = new VueRouter({
   routes,
-  mode: 'history'
+  mode: 'history',
+  // linkActiveClass: "active"
 })
 
 export default router
