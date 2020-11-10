@@ -1,15 +1,16 @@
 <template>
   <v-layout>
     <v-row>
-      <v-col cols="12" lg="12" md="8" sm="6">
+      <v-col cols="12">
         <v-card>
-          <v-card-title>Charts</v-card-title>
+          <v-card-title> Line Chart </v-card-title>
           <v-card-text>
-            <GChart
-              type="ColumnChart"
-              :data="chartData"
+            <apexchart
+              type="line"
+              height="350"
               :options="chartOptions"
-            />
+              :series="series"
+            ></apexchart>
           </v-card-text>
         </v-card>
       </v-col>
@@ -18,27 +19,52 @@
 </template>
 
 <script>
-import { GChart } from "vue-google-charts";
-
 export default {
   name: "Home",
-  components: {
-    GChart,
-  },
   data() {
     return {
-      // Array will be automatically processed with visualization.arrayToDataTable function
-      chartData: [
-        ["Year", "Sales", "Expenses", "Profit"],
-        ["2014", 1000, 400, 200],
-        ["2015", 1170, 460, 250],
-        ["2016", 660, 1120, 300],
-        ["2017", 1030, 540, 350],
+      series: [
+        {
+          name: "Desktops",
+          data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
+        },
       ],
       chartOptions: {
         chart: {
-          title: "Company Performance",
-          subtitle: "Sales, Expenses, and Profit: 2014-2017",
+          height: 350,
+          type: "line",
+          zoom: {
+            enabled: false,
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          curve: "smooth",
+        },
+        title: {
+          // text: "Product Trends by Month",
+          align: "left",
+        },
+        grid: {
+          row: {
+            colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+            opacity: 0.5,
+          },
+        },
+        xaxis: {
+          categories: [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+          ],
         },
       },
     };

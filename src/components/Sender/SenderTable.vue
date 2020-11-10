@@ -4,7 +4,7 @@
       <v-data-table :headers="headers" :items="senders" :loading="loading">
         <template v-slot:top>
           <v-toolbar flat>
-            <v-toolbar-title>Senders</v-toolbar-title>
+            <v-toolbar-title>Devices</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" persistent max-width="500px">
               <template v-slot:activator="{ on, attrs }">
@@ -15,7 +15,7 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  New Sender
+                  New Device
                 </v-btn>
               </template>
               <v-card class="pa-5">
@@ -77,7 +77,6 @@
             <v-dialog v-model="dialogQrcode" max-width="290">
               <v-card>
                 <v-card-title class="headline"> QrCode </v-card-title>
-
                 <v-card-text>
                   <div class="text-center mt-4">
                     <qrcode-vue
@@ -120,6 +119,9 @@
             </v-dialog>
           </v-toolbar>
         </template>
+        <template v-slot:[`item.status`]="{ item }">
+          <v-chip small :color="item.status === 'Active' ? 'teal lighten-2' : 'red lighten-2' " dark>{{ item.status }}</v-chip>
+        </template>
         <template v-slot:[`item.actions`]="{ item }">
           <v-icon
             color="teal lighten-2"
@@ -145,7 +147,7 @@
           >
             mdi-pencil
           </v-icon>
-          <v-icon color="red darken-1" small @click="deleteItem(item)">
+          <v-icon color="red lighten-2" small @click="deleteItem(item)">
             mdi-delete
           </v-icon>
         </template>
@@ -160,7 +162,6 @@
 <script>
 // import { axios } from "../api";
 import axios from "axios";
-// import QRCode from "@chenfengyuan/vue-qrcode"
 import QrcodeVue from "qrcode.vue";
 
 export default {
@@ -181,8 +182,8 @@ export default {
         value: "name",
       },
       { text: "Sensor", value: "sensor", sortable: false },
-      { text: "Status", value: "status" },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: "Status", align: "center", value: "status" },
+      { text: "Actions", align: "center", value: "actions", sortable: false },
     ],
     status: ["Active", "Deactive"],
     sensor: ["Turbility", "Suhu", "LDR", "Flow"],
@@ -210,7 +211,7 @@ export default {
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "New Sender" : "Edit Sender";
+      return this.editedIndex === -1 ? "New Device" : "Edit Device";
     },
   },
 
