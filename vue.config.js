@@ -2,5 +2,6 @@ module.exports = {
   "transpileDependencies": [
     "vuetify"
   ],
-  runtimeCompiler: true
+  runtimeCompiler: true,
+  
 }

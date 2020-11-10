@@ -1,6 +1,9 @@
 <template>
   <v-app>
-    <NavBar />
+    <component :is="$route.meta.layout">
+      <router-view />
+    </component>
+    <!-- <NavBar />
     <AppBar />
     <v-main class="grey lighten-4">
       <v-container>
@@ -8,20 +11,37 @@
           <router-view />
         </transition>
       </v-container>
-    </v-main>
+    </v-main> -->
   </v-app>
 </template>
 
 <script>
-import NavBar from "@/components/NavBar";
-import AppBar from "@/components/AppBar";
+// import NavBar from "@/components/NavBar";
+// import AppBar from "@/components/AppBar";
+const default_layout = "default";
+
 
 export default {
   name: "App",
-  components: {
-    NavBar,
-    AppBar,
+  // components: {
+  //   NavBar,
+  //   AppBar,
+  // },
+  data() {
+    return {
+      drawer: true,
+    }
   },
+  methods:{
+   layout() {
+      const _layout = (this.$route.meta?.layout || default_layout) + "-layout"
+      console.log(_layout)
+      return _layout;
+    }
+  },
+  computed: {
+    
+  }
 };
 </script>
 
