@@ -1,5 +1,5 @@
 <template>
-  <v-layout>
+  <div>
     <v-row>
       <v-col lg="3" md="6" sm="12">
         <v-card :loading="loading">
@@ -26,9 +26,16 @@
           <v-card-text>
             <div class="display-1">
               {{ sender.sensor }}
-              <v-icon :color="selectedSensorType.color"> {{ selectedSensorType.icon }} </v-icon>
+              <v-icon :color="selectedSensorType.color">
+                {{ selectedSensorType.icon }}
+              </v-icon>
             </div>
           </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12">
+        <v-card class="overflow-hidden">
+          <Map />
         </v-card>
       </v-col>
       <v-col cols="12">
@@ -37,7 +44,6 @@
           <v-card-text>
             <apexchart
               type="line"
-              height="350"
               :options="chartOptions"
               :series="series"
             ></apexchart>
@@ -68,19 +74,21 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-layout>
+  </div>
 </template>
 
 <script>
 import axios from "axios";
 import QrcodeVue from "qrcode.vue";
-import SenderLog from "./SenderLog";
+import SenderLog from "./SenderLog.vue";
+import Map from "@/components/shared/Map.vue";
 
 export default {
   name: "SenderDetail",
   components: {
     SenderLog,
     QrcodeVue,
+    Map
   },
   data() {
     return {
@@ -189,7 +197,7 @@ export default {
     };
   },
   created() {
-    this.getSender()
+    this.getSender();
   },
   methods: {
     getSender() {
@@ -217,9 +225,9 @@ export default {
      * * set to type
      * @typedef Sender
      * @property {string} sensor
-     * 
+     *
      * @param {Sender} sender
-     * 
+     *
      */
     getSensorType(sender) {
       switch (sender.sensor) {

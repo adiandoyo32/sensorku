@@ -120,7 +120,14 @@
           </v-toolbar>
         </template>
         <template v-slot:[`item.status`]="{ item }">
-          <v-chip small :color="item.status === 'Active' ? 'teal lighten-2' : 'red lighten-2' " dark>{{ item.status }}</v-chip>
+          <v-chip
+            small
+            :color="
+              item.status === 'Active' ? 'teal lighten-2' : 'red lighten-2'
+            "
+            dark
+            >{{ item.status }}</v-chip
+          >
         </template>
         <template v-slot:[`item.actions`]="{ item }">
           <v-icon
@@ -147,7 +154,12 @@
           >
             mdi-pencil
           </v-icon>
-          <v-icon color="red lighten-2" small @click="deleteItem(item)">
+          <v-icon
+            color="red lighten-2"
+            class="mr-4"
+            small
+            @click="deleteItem(item)"
+          >
             mdi-delete
           </v-icon>
         </template>
@@ -185,8 +197,8 @@ export default {
       { text: "Status", align: "center", value: "status" },
       { text: "Actions", align: "center", value: "actions", sortable: false },
     ],
-    status: ["Active", "Deactive"],
-    sensor: ["Turbility", "Suhu", "LDR", "Flow"],
+    status: ["Active", "Inactive"],
+    sensor: ["Turbidity", "Suhu", "LDR", "Flow"],
     senders: [],
     editedIndex: -1,
     editedItem: {
@@ -249,7 +261,7 @@ export default {
             data.status = res.data[key].status;
             this.senders.push(data);
           }
-          this.loading = false
+          this.loading = false;
         })
         .catch((error) => console.log(error));
     },
@@ -345,10 +357,10 @@ export default {
 
     navigateSenderDetail(item) {
       let senderId = item.id;
-      this.$router.push({ 
+      this.$router.push({
         name: "SenderDetail",
-        params: { id: senderId }
-      })
+        params: { id: senderId },
+      });
     },
   },
 };

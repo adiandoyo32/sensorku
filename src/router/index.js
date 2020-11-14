@@ -10,6 +10,10 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
+    redirect: '/login'
+  },
+  {
+    path: '/dashboard',
     name: 'Home',
     component: Home
   },
@@ -20,7 +24,7 @@ const routes = [
     meta: { layout: "no-sidebar-layout" }
   },
   {
-    path: '/senders',
+    path: '/devices',
     component: Sender,
     children: [
       {
@@ -47,18 +51,16 @@ const routes = [
     name: '404',
     // redirect: '/404',
     component: () => import('@/views/error-page/404'),
-    // hidden: true 
+    meta: { layout: "no-sidebar-layout" }
   }
 ]
 
 const router = new VueRouter({
   routes,
   mode: 'history',
-  // linkActiveClass: "active"
 })
 
 router.beforeEach((to, from, next) => {
-  console.log('before', to.meta)
   to.meta.layout = to.meta.layout || 'default-layout'
   next()
 })

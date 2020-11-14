@@ -41,16 +41,11 @@ export default {
     return {
       items: [
         { title: "Dashboard", icon: "mdi-view-dashboard", path: "/" },
-        { title: "Senders", icon: "mdi-access-point", path: "/senders" },
+        { title: "Devices", icon: "mdi-access-point", path: "/senders" },
         { title: "About", icon: "mdi-help-box", path: "/about" },
       ],
       right: null,
-      drawer: true,
     };
   },
 };
 </script>
-
-<style scoped>
-
-</style>

@@ -1,6 +1,6 @@
 <template>
   <v-main class="grey lighten-4">
-    <v-container>
+    <v-container fluid fill-height>
       <transition>
         <slot />
       </transition>
@@ -11,6 +11,3 @@
 <script>
 export default {};
 </script>
-
-<style>
-</style>
