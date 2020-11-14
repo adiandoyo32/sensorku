@@ -2,7 +2,7 @@
   <v-main class="grey lighten-4">
     <v-app-bar app>
       <v-app-bar-nav-icon @click.stop="toggle"></v-app-bar-nav-icon>
-      <v-toolbar-title>Application</v-toolbar-title>
+      <v-toolbar-title></v-toolbar-title>
       <v-spacer></v-spacer>
 
       <v-btn icon>
@@ -51,7 +51,6 @@
     <v-navigation-drawer
       v-model="drawer"
       class="teal darken-2"
-      floating
       dark
       app
     >
@@ -105,9 +104,10 @@ export default {
       items: [
         { title: "Dashboard", icon: "mdi-view-dashboard", path: "/dashboard" },
         { title: "Devices", icon: "mdi-access-point", path: "/devices" },
-        { title: "About", icon: "mdi-help-box", path: "/about" },
+        { title: "Users", icon: "mdi-account-supervisor", path: "/users" },
+        // { title: "About", icon: "mdi-help-box", path: "/about" },
       ],
-      drawer: true,
+      drawer: !this.$vuetify.breakpoint.mdAndDown
     };
   },
   methods: {

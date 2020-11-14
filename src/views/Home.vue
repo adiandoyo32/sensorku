@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col lg="3" md="4" sm="6" cols="6">
+      <v-col lg="3" md="4" sm="12" cols="12">
         <v-card>
           <v-card-text class="m-0">
             <v-list-item three-line>
@@ -22,7 +22,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col lg="3" md="4" sm="6" cols="6">
+      <v-col lg="3" md="4" sm="12" cols="12">
         <v-card>
           <v-card-text class="m-0">
             <v-list-item three-line>
@@ -43,7 +43,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col lg="3" md="4" sm="6" cols="6">
+      <v-col lg="3" md="4" sm="12" cols="12">
         <v-card>
           <v-card-text class="m-0">
             <v-list-item three-line>
@@ -64,7 +64,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col lg="3" md="4" sm="6" cols="6">
+      <v-col lg="3" md="4" sm="12" cols="12">
         <v-card>
           <v-card-text class="m-0">
             <v-list-item three-line>

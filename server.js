@@ -6,4 +6,7 @@ app = express();
 
 app.use(serveStatic(__dirname + "/dist"));
 var port = process.env.PORT || 5000;
-app.listen(port);
+app.listen(port, () => {
+    console.log('Server is running on port 5000');
+    console.log('Access on http://localhost:5000');
+});

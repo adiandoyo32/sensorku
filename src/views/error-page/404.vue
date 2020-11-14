@@ -14,7 +14,7 @@
         </div>
         <div class="bullshit__headline">{{ message }}</div>
         <div class="bullshit__info">Please check that the URL you entered is correct, or click the button below to return to the homepage.</div>
-        <a href="/" class="bullshit__return-home">Back to home</a>
+        <a href="/dashboard" class="bullshit__return-home">Back to home</a>
       </div>
     </div>
   </div>
@@ -164,7 +164,7 @@ export default {
       font-size: 32px;
       font-weight: bold;
       line-height: 40px;
-      color: #1482f0;
+      color: #00796B;
       opacity: 0;
       margin-bottom: 20px;
       animation-name: slideUp;
@@ -199,9 +199,10 @@ export default {
       float: left;
       width: 110px;
       height: 36px;
-      background: #1482f0;
+      background: #00796B;
       border-radius: 100px;
       text-align: center;
+      text-decoration: none;
       color: #ffffff;
       opacity: 0;
       font-size: 14px;
