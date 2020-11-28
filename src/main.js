@@ -11,6 +11,7 @@ import store from './store'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import { firestorePlugin } from 'vuefire';
 import './registerServiceWorker'
+import './services';
 
 Vue.use(firestorePlugin);
 

@@ -5,7 +5,7 @@
         <v-card-title></v-card-title>
         <v-img src="@/assets/plant.svg" :aspect-ratio="4.0" contain />
         <v-card-text>
-          <v-form ref="form" class="px-10">
+          <v-form ref="form" @submit.prevent="submit" class="px-10">
             <v-text-field
               label="Username"
               v-model="username"
@@ -19,13 +19,11 @@
               :type="showPassword ? 'text' : 'password'"
               :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               @click:append="showPassword = !showPassword"
-              @keyup.enter="validate"
+              @keydown.enter.prevent="submit"
             >
             </v-text-field>
             <v-row align="center" justify="center" class="pt-8">
-              <v-btn color="teal darken-2" dark @click="validate">
-                Login
-              </v-btn>
+              <v-btn color="teal darken-2" dark type="submit"> Login </v-btn>
             </v-row>
           </v-form>
         </v-card-text>
@@ -35,26 +33,49 @@
 </template>
 
 <script>
+// import axios from "@/services";
+import axios from "axios";
+
 export default {
   data() {
     return {
-      username: "admin",
-      password: 7894561230,
+      username: "",
+      password: "",
       usernameRules: [(v) => !!v || "Username is required"],
       passwordRules: [(v) => !!v || "Password is required"],
-      rightUsername: "admin",
-      rightPassword: 7894561230,
       showPassword: false,
+      client_secret: ""
     };
   },
   methods: {
-    validate() {
+    async submit() {
       if (this.$refs.form.validate()) {
-        if (this.username == this.rightUsername && this.password == this.rightPassword) {
-          this.$router.push({name: 'Home'})
-        } else {
-          console.log('wrong username or password');
-        }
+        await axios({
+          method: "GET",
+          url: '/api/get-client',
+        })
+          .then((res) => {
+            this.client_secret = res.data.data.secret;
+            axios({
+              method: "POST",
+              url: '/oauth/token',
+              data: {
+                grant_type: 'password',
+                client_id: "2",
+                client_secret: this.client_secret,
+                username: this.username,
+                password: this.password
+              }
+            }).then((res) => {
+              console.log(res);
+              localStorage.setItem('token', res.data.access_token);
+              this.$store.dispatch('user', res.data)
+              this.$router.push('/dashboard');
+            }).catch((err) => {
+              console.log('err' + err);
+            })
+          })
+          .catch((error) => console.log('error ',error));
       }
     },
   },

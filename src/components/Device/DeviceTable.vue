@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-data-table :headers="headers" :items="senders" :loading="loading">
+      <v-data-table :headers="headers" :items="deviceList" :loading="loading">
         <template v-slot:top>
           <v-toolbar flat>
             <v-toolbar-title>Devices</v-toolbar-title>
@@ -119,14 +119,12 @@
             </v-dialog>
           </v-toolbar>
         </template>
-        <template v-slot:[`item.status`]="{ item }">
+        <template v-slot:[`item.is_active`]="{ item }">
           <v-chip
             small
-            :color="
-              item.status === 'Active' ? 'teal lighten-2' : 'red lighten-2'
-            "
+            :color="item.is_active === 1 ? 'teal lighten-2' : 'red lighten-2'"
             dark
-            >{{ item.status }}</v-chip
+            >{{ item.is_active === 1 ? "Active" : "Inactive" }}</v-chip
           >
         </template>
         <template v-slot:[`item.actions`]="{ item }">
@@ -134,7 +132,7 @@
             color="teal lighten-2"
             small
             class="mr-4"
-            @click="navigateSenderDetail(item)"
+            @click="navigateDeviceDetail(item)"
           >
             mdi-information-outline
           </v-icon>
@@ -182,19 +180,14 @@ export default {
     qrcodeValue: "",
     size: 180,
     valid: true,
-    loading: true,
     dialog: false,
     dialogQrcode: false,
     dialogDelete: false,
     headers: [
-      {
-        text: "Name",
-        align: "start",
-        sortable: false,
-        value: "name",
-      },
-      { text: "Sensor", value: "sensor", sortable: false },
-      { text: "Status", align: "center", value: "status" },
+      { text: "Name", align: "start", sortable: false, value: "device_id" },
+      { text: "Sender", value: "sender_id", sortable: false },
+      { text: "Sensor", value: "sensor_id", sortable: false },
+      { text: "Status", align: "center", value: "is_active" },
       { text: "Actions", align: "center", value: "actions", sortable: false },
     ],
     status: ["Active", "Inactive"],
@@ -215,16 +208,11 @@ export default {
     },
     nameRules: [(v) => !!v || "Name is required"],
     sensorRules: [(v) => !!v || "Sensor is required"],
+    device: {}
   }),
 
   components: {
     QrcodeVue,
-  },
-
-  computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "New Device" : "Edit Device";
-    },
   },
 
   watch: {
@@ -239,8 +227,24 @@ export default {
     },
   },
 
+  computed: {
+    formTitle() {
+      return this.editedIndex === -1 ? "New Device" : "Edit Device";
+    },
+    deviceList() {
+      return this.$store.getters["device/DEVICES"];
+    },
+    loading() {
+      return this.$store.getters['device/IS_LOADING'];
+    }
+  },
+
+  mounted() {
+    this.$store.dispatch("device/FETCH_DEVICES");
+  },
+
   created() {
-    this.initialize();
+    // this.initialize();
   },
 
   methods: {
@@ -355,11 +359,11 @@ export default {
       }
     },
 
-    navigateSenderDetail(item) {
-      let senderId = item.id;
+    navigateDeviceDetail(item) {
+      let deviceId = item.device_id;
       this.$router.push({
         name: "SenderDetail",
-        params: { id: senderId },
+        params: { id: deviceId },
       });
     },
   },

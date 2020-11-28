@@ -11,7 +11,7 @@
 <script>
 
 export default {
-  name: "Senders",
+  name: "Device",
 };
 </script>
 

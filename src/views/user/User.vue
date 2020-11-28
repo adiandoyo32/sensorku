@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import Axios from "axios";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -53,13 +53,12 @@ export default {
   },
   methods: {
     getUser() {
-      Axios({
+      axios({
         method: "GET",
-        url: "https://jsonplaceholder.typicode.com/users",
-        responseType: "json",
+        url: "/api/devices",
       })
         .then((res) => {
-            this.users = res.data;
+          this.users = res.data.data;
           this.loading = false;
         })
         .catch((error) => console.log(error));

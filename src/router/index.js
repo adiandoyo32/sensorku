@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import Sender from '../views/Sender.vue'
-import SenderTable from '../components/Sender/SenderTable.vue'
-import SenderDetail from '../components/Sender/SenderDetail.vue'
+import Device from '../views/Device.vue'
+import DeviceTable from '../components/Device/DeviceTable.vue'
+import DeviceDetail from '../components/Device/DeviceDetail.vue'
 
 Vue.use(VueRouter)
 
@@ -25,17 +25,17 @@ const routes = [
   },
   {
     path: '/devices',
-    component: Sender,
+    component: Device,
     children: [
       {
         path: '',
-        name: 'SenderTable',
-        component: SenderTable,
+        name: 'DeviceTable',
+        component: DeviceTable,
       },
       {
         path: ':id',
-        name: 'SenderDetail',
-        component: SenderDetail,
+        name: 'DeviceDetail',
+        component: DeviceDetail,
       },
     ]
   },

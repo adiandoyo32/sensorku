@@ -115,6 +115,7 @@ export default {
       this.drawer = !this.drawer;
     },
     logout() {
+      localStorage.removeItem('token');
       this.$router.push({ name: "Login" });
     },
   },

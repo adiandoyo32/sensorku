@@ -2,10 +2,10 @@
   <div>
     <v-row>
       <v-col lg="3" md="6" sm="12">
-        <v-card :loading="loading">
+        <v-card >
           <v-card-title>
             <v-row no-gutters class="justify-space-between">
-              <div>{{ sender.name }}</div>
+              <div>{{ device.device_id }}</div>
               <v-icon color="lime darken-2" @click="openQrcode()">
                 mdi-qrcode-scan
               </v-icon>
@@ -14,18 +14,19 @@
           <v-card-subtitle>
             <v-chip
               :color="
-                sender.status == 'Active' ? 'teal lighten-2' : 'red lighten-2'
+                device.is_active == 1 ? 'teal lighten-2' : 'red lighten-2'
               "
               small
               text-color="white"
               label
             >
-              {{ sender.status }}
+              {{ device.is_active == 1 ? 'Active' : 'Inactive' }}
             </v-chip>
           </v-card-subtitle>
           <v-card-text>
             <div class="display-1">
-              {{ sender.sensor }}
+              {{ device.sensor_id }}
+              {{ device.sender_id }}
               <v-icon :color="selectedSensorType.color">
                 {{ selectedSensorType.icon }}
               </v-icon>
@@ -33,12 +34,12 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12">
+      <!-- <v-col cols="12">
         <v-card class="overflow-hidden">
           <Map />
         </v-card>
-      </v-col>
-      <v-col cols="12">
+      </v-col> -->
+      <!-- <v-col cols="12">
         <v-card>
           <v-card-title> Line Chart </v-card-title>
           <v-card-text>
@@ -49,9 +50,9 @@
             ></apexchart>
           </v-card-text>
         </v-card>
-      </v-col>
+      </v-col> -->
       <v-col cols="12">
-        <SenderLog :id="id" />
+        <DeviceLog :deviceId="deviceId" />
       </v-col>
     </v-row>
     <v-dialog v-model="dialogQrcode" max-width="290">
@@ -80,20 +81,29 @@
 <script>
 import axios from "axios";
 import QrcodeVue from "qrcode.vue";
-import SenderLog from "./SenderLog.vue";
-import Map from "@/components/shared/Map.vue";
+import DeviceLog from "./DeviceLog.vue";
+// import Map from "@/components/shared/Map.vue";
 
 export default {
-  name: "SenderDetail",
+  name: "DeviceDetail",
   components: {
-    SenderLog,
+    DeviceLog,
     QrcodeVue,
-    Map
+    // Map
   },
   data() {
     return {
-      id: this.$route.params.id,
-      loading: true,
+      deviceId: this.$route.params.id,
+      device: {
+        id: null,
+        is_active: null,
+        lat: 0,
+        long: 0,
+        sender_id: '',
+        sensor_id: '',
+        user_id: '',
+      },
+      loading: false,
       qrcodeValue: "",
       size: 180,
       dialogQrcode: false,
@@ -197,7 +207,7 @@ export default {
     };
   },
   created() {
-    this.getSender();
+    this.findDevice();
   },
   methods: {
     getSender() {
@@ -215,9 +225,13 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+    findDevice() {
+      var devices = this.$store.getters["device/DEVICES"];
+      this.device = devices.find(({ device_id }) => device_id === this.deviceId);
+    },
 
     openQrcode() {
-      this.qrcodeValue = this.id;
+      this.qrcodeValue = this.deviceId;
       this.dialogQrcode = true;
     },
 
@@ -250,12 +264,9 @@ export default {
   },
   watch: {
     $route(to) {
-      this.id = to.params.id;
-      this.getSender();
+      this.deviceId = to.params.id;
+      this.findDevice();
     },
-    // sender: function(from, to) {
-    //   console.log(from, to);
-    // }
   },
 };
 </script>
