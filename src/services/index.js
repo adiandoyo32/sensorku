@@ -1,12 +1,18 @@
 import axios from "axios";
 
-// const token = "auth";
-// axios.interceptors.request.use((req) => {
-//   req.headers = {
-//     Authorization: "Bearer " + token,
-//   };
-//   return req;
-// });
+const service = axios.create({
+    baseURL: process.env.VUE_APP_URL
+})
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000';
-axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+service.interceptors.request.use(
+    config => {
+        config.headers = {
+            "Authorization": 'Bearer ' + localStorage.getItem('token'),
+            "Content-Type": 'application/json'
+        };
+        return config;
+    },
+    error => Promise.reject(error)
+)
+
+export default service

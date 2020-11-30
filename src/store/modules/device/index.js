@@ -1,10 +1,12 @@
-import Axios from "axios";
+import Device from "@/services/device";
 
 const state = {
   devices: [],
   device: {},
   deviceLogs: [],
   isLoading: true,
+  successMessage: null,
+  errMessage: null,
 };
 
 const getters = {
@@ -14,8 +16,17 @@ const getters = {
   DEVICES: (state) => {
     return state.devices;
   },
+  DEVICE: (state) => {
+    return state.device;
+  },
   DEVICE_LOGS: (state) => {
     return state.deviceLogs;
+  },
+  SUCCESS_MESSAGE: (state) => {
+    return state.successMessage;
+  },
+  ERR_MESSAGE: (state) => {
+    return state.errMessage;
   },
 };
 
@@ -23,31 +34,67 @@ const mutations = {
   SET_DEVICES: (state, payload) => {
     state.devices = payload;
   },
+  SET_DEVICE: (state, payload) => {
+    state.device = payload;
+  },
   SET_LOADING: (state, payload) => {
     state.isLoading = payload;
   },
   SET_DEVICE_LOGS: (state, payload) => {
     state.deviceLogs = payload;
   },
+  SET_SUCCESS_MESSAGE: (state, payload) => {
+    state.successMessage = payload;
+  },
+  SET_ERR_MESSAGE: (state, payload) => {
+    state.errMessage = payload;
+  },
 };
 
 const actions = {
+  // fetch all device
   FETCH_DEVICES: (context) => {
-    Axios({
-      method: "GET",
-      url: "api/devices",
-    })
+    Device.fetchDevice()
       .then((res) => {
         context.commit("SET_DEVICES", res.data.data);
       })
-      .catch((error) => console.log(error))
+      .catch((err) => {
+        console.log(err);
+      })
       .finally(() => context.commit("SET_LOADING", false));
   },
-  FETCH_DEVICE_LOGS: (context, payload) => {
-    Axios({
-      method: "GET",
-      url: `api/devices/${payload.deviceId}/data`,
-    })
+
+  CREATE_DEVICE: (context, device) => {
+    Device.createDevice(device)
+      .then((res) => {
+        if (res.data.error) {
+          context.commit("SET_SUCCESS_MESSAGE", null);
+          context.commit("SET_ERR_MESSAGE", res.data.error);
+        } else {
+          context.commit("SET_SUCCESS_MESSAGE", res.data.data);
+          context.commit("SET_ERR_MESSAGE", null);
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  },
+
+  // fetch single device
+  SHOW_DEVICE: (context, deviceId) => {
+    context.commit("SET_LOADING", true);
+    Device.showDevice(deviceId)
+      .then((res) => {
+        context.commit("SET_DEVICE", res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => context.commit("SET_LOADING", false));
+  },
+
+  FETCH_DEVICE_LOGS: (context, deviceId) => {
+    Device.fetchDeviceLogs(deviceId)
       .then((res) => {
         context.commit("SET_DEVICE_LOGS", res.data.data);
       })

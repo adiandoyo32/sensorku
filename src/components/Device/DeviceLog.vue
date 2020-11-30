@@ -1,11 +1,7 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-data-table
-        :headers="headers"
-        :items="deviceLogs"
-        sort-by="value"
-      >
+      <v-data-table :headers="headers" :items="deviceLogs" sort-by="value">
         <template v-slot:top>
           <v-toolbar flat>
             <v-toolbar-title>Device Logs</v-toolbar-title>
@@ -29,7 +25,7 @@
 export default {
   data: () => ({
     headers: [
-      { text: "Device Name", sortable: false, value: "device_id"},
+      { text: "Device Name", sortable: false, value: "device_id" },
       { text: "Value", value: "value" },
     ],
   }),
@@ -43,9 +39,7 @@ export default {
   },
 
   mounted() {
-    this.$store.dispatch("device/FETCH_DEVICE_LOGS", {
-      deviceId: this.deviceId,
-    });
+    this.$store.dispatch("device/FETCH_DEVICE_LOGS", this.deviceId);
   },
 
   methods: {},

@@ -121,25 +121,25 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row>
+    <!-- <v-row>
       <v-col cols="12">
         <v-card class="overflow-hidden">
           <Map />
         </v-card>
       </v-col>
-    </v-row>
+    </v-row> -->
   </div>
 </template>
 
 <script>
 // import Test from "@/components/dashboard/GChart.vue";
 // import PieChart from "@/components/dashboard/PieChart.vue";
-import Map from "@/components/shared/Map.vue";
+// import Map from "@/components/shared/Map.vue";
 
 export default {
   name: "Home",
   components: {
-    Map,
+    // Map,
     // PieChart,
   },
   data() {

@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-col lg="3" md="6" sm="12">
-        <v-card >
+        <v-card :loading="loading">
           <v-card-title>
             <v-row no-gutters class="justify-space-between">
               <div>{{ device.device_id }}</div>
@@ -20,7 +20,7 @@
               text-color="white"
               label
             >
-              {{ device.is_active == 1 ? 'Active' : 'Inactive' }}
+              {{ device.is_active == 1 ? "Active" : "Inactive" }}
             </v-chip>
           </v-card-subtitle>
           <v-card-text>
@@ -34,11 +34,11 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <!-- <v-col cols="12">
+      <v-col cols="12">
         <v-card class="overflow-hidden">
           <Map />
         </v-card>
-      </v-col> -->
+      </v-col>
       <!-- <v-col cols="12">
         <v-card>
           <v-card-title> Line Chart </v-card-title>
@@ -79,39 +79,32 @@
 </template>
 
 <script>
-import axios from "axios";
 import QrcodeVue from "qrcode.vue";
 import DeviceLog from "./DeviceLog.vue";
-// import Map from "@/components/shared/Map.vue";
+import Map from "@/components/shared/Map.vue";
 
 export default {
   name: "DeviceDetail",
   components: {
     DeviceLog,
     QrcodeVue,
-    // Map
+    Map
   },
   data() {
     return {
       deviceId: this.$route.params.id,
-      device: {
-        id: null,
-        is_active: null,
-        lat: 0,
-        long: 0,
-        sender_id: '',
-        sensor_id: '',
-        user_id: '',
-      },
-      loading: false,
+      // device: {
+      //   id: null,
+      //   is_active: null,
+      //   lat: 0,
+      //   long: 0,
+      //   sender_id: '',
+      //   sensor_id: '',
+      //   user_id: '',
+      // },
       qrcodeValue: "",
       size: 180,
       dialogQrcode: false,
-      sender: {
-        name: "",
-        sensor: "",
-        status: "",
-      },
       sensorType: {
         turbidity: { icon: "mdi-wave", color: "brown lighten-2" },
         suhu: { icon: "mdi-thermometer", color: "red lighten-2" },
@@ -206,28 +199,26 @@ export default {
       },
     };
   },
-  created() {
-    this.findDevice();
-  },
-  methods: {
-    getSender() {
-      axios({
-        method: "GET",
-        url: `https://add-blank.firebaseio.com/senders/${this.id}.json`,
-        responseType: "json",
-      })
-        .then((res) => {
-          this.sender.name = res.data.name;
-          this.sender.sensor = res.data.sensor;
-          this.sender.status = res.data.status;
-          this.getSensorType(this.sender);
-          this.loading = false;
-        })
-        .catch((error) => console.log(error));
+
+  computed: {
+    device() {
+      return this.$store.getters["device/DEVICE"];
     },
+    loading() {
+      return this.$store.getters["device/IS_LOADING"];
+    },
+  },
+
+  mounted() {
+    this.$store.dispatch("device/SHOW_DEVICE", this.deviceId);
+  },
+
+  methods: {
     findDevice() {
       var devices = this.$store.getters["device/DEVICES"];
-      this.device = devices.find(({ device_id }) => device_id === this.deviceId);
+      this.device = devices.find(
+        ({ device_id }) => device_id === this.deviceId
+      );
     },
 
     openQrcode() {
@@ -270,6 +261,3 @@ export default {
   },
 };
 </script>
-
-<style>
-</style>
