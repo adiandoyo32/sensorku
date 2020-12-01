@@ -64,20 +64,23 @@ const actions = {
       .finally(() => context.commit("SET_LOADING", false));
   },
 
-  CREATE_DEVICE: (context, device) => {
+  CREATE_DEVICE: ({ dispatch, commit }, device) => {
+    commit("SET_LOADING", true);
     Device.createDevice(device)
       .then((res) => {
         if (res.data.error) {
-          context.commit("SET_SUCCESS_MESSAGE", null);
-          context.commit("SET_ERR_MESSAGE", res.data.error);
+          commit("SET_SUCCESS_MESSAGE", null);
+          commit("SET_ERR_MESSAGE", res.data.error);
         } else {
-          context.commit("SET_SUCCESS_MESSAGE", res.data.data);
-          context.commit("SET_ERR_MESSAGE", null);
+          commit("SET_SUCCESS_MESSAGE", res.data);
+          commit("SET_ERR_MESSAGE", null);
+          dispatch("FETCH_DEVICES");
         }
       })
       .catch((err) => {
         console.log("err", err);
-      });
+      })
+      .finally(() => commit("SET_LOADING", false));
   },
 
   // fetch single device
@@ -91,6 +94,45 @@ const actions = {
         console.log(err);
       })
       .finally(() => context.commit("SET_LOADING", false));
+  },
+
+  UPDATE_DEVICE: ({ dispatch, commit }, device) => {
+    commit("SET_LOADING", true);
+    Device.updateDevice(device)
+      .then((res) => {
+        if (res.data.error) {
+          commit("SET_SUCCESS_MESSAGE", null);
+          commit("SET_ERR_MESSAGE", res.data.error);
+        } else {
+          commit("SET_SUCCESS_MESSAGE", res.data);
+          commit("SET_ERR_MESSAGE", null);
+          dispatch("FETCH_DEVICES");
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+      })
+      .finally(() => commit("SET_LOADING", false));
+  },
+
+  DELETE_DEVICE: ({ dispatch, commit }, deviceId) => {
+    commit("SET_LOADING", true);
+    Device.deleteDevice(deviceId)
+      .then((res) => {
+        console.log(res);
+        if (res.data.error) {
+          commit("SET_SUCCESS_MESSAGE", null);
+          commit("SET_ERR_MESSAGE", res.data.error);
+        } else {
+          commit("SET_SUCCESS_MESSAGE", res.data.data);
+          commit("SET_ERR_MESSAGE", null);
+          dispatch("FETCH_DEVICES");
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+      })
+      .finally(() => commit("SET_LOADING", false));
   },
 
   FETCH_DEVICE_LOGS: (context, deviceId) => {

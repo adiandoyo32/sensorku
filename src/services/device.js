@@ -14,13 +14,28 @@ export default {
     return service({
       method: "POST",
       url: PATH,
-      data: device
-    })
+      data: device,
+    });
   },
 
   showDevice(deviceId) {
     return service({
       method: "GET",
+      url: `${PATH}/${deviceId}`,
+    });
+  },
+
+  updateDevice(device) {
+    return service({
+      method: "PATCH",
+      url: `${PATH}/${device.device_id}`,
+      data: device,
+    });
+  },
+
+  deleteDevice(deviceId) {
+    return service({
+      method: "DELETE",
       url: `${PATH}/${deviceId}`,
     });
   },
@@ -31,5 +46,4 @@ export default {
       url: `${PATH}/${deviceId}/data`,
     });
   },
-
 };
