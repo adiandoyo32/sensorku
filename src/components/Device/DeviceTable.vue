@@ -33,13 +33,11 @@
                     </v-btn>
                   </template>
                   <v-card class="pa-5">
-                    <validation-observer ref="observer" v-slot="{ invalid }">
-                      <v-form
-                        ref="form"
-                        v-model="valid"
-                        @submit.prevent="save"
-                        lazy-validation
-                      >
+                    <validation-observer
+                      ref="observer"
+                      v-slot="{ handleSubmit }"
+                    >
+                      <v-form @submit.prevent="handleSubmit(save)">
                         <v-card-title>
                           <span class="headline">{{ formTitle }}</span>
                         </v-card-title>
@@ -48,28 +46,47 @@
                           <v-container>
                             <v-row>
                               <v-col cols="12">
-                                <v-text-field
-                                  v-model="editedItem.device_id"
-                                  label="Device Name"
-                                  :rules="nameRules"
-                                  required
-                                  v-if="editedIndex === -1"
-                                ></v-text-field>
-                                <v-text-field
-                                  v-model="editedItem.sender_id"
-                                  label="Sender"
-                                  :rules="senderRules"
-                                  required
-                                ></v-text-field>
-                                <v-text-field
-                                  v-model="editedItem.sensor_id"
-                                  label="Sensor"
-                                  :rules="sensorRules"
-                                  required
-                                ></v-text-field>
                                 <validation-provider
                                   v-slot="{ errors }"
-                                  name="select"
+                                  name="Device Name"
+                                  rules="required"
+                                  v-if="editedIndex === -1"
+                                >
+                                  <v-text-field
+                                    v-model="editedItem.device_id"
+                                    label="Device Name"
+                                    :error-messages="errors"
+                                    required
+                                    v-if="editedIndex === -1"
+                                  ></v-text-field>
+                                </validation-provider>
+                                <validation-provider
+                                  v-slot="{ errors }"
+                                  name="Sender"
+                                  rules="required"
+                                >
+                                  <v-text-field
+                                    v-model="editedItem.sender_id"
+                                    label="Sender"
+                                    :error-messages="errors"
+                                    required
+                                  ></v-text-field>
+                                </validation-provider>
+                                <validation-provider
+                                  v-slot="{ errors }"
+                                  name="Sensor"
+                                  rules="required"
+                                >
+                                  <v-text-field
+                                    v-model="editedItem.sensor_id"
+                                    label="Sensor"
+                                    :error-messages="errors"
+                                    required
+                                  ></v-text-field>
+                                </validation-provider>
+                                <validation-provider
+                                  v-slot="{ errors }"
+                                  name="Status"
                                   rules="required"
                                 >
                                   <v-select
@@ -78,24 +95,36 @@
                                     item-text="state"
                                     item-value="abbr"
                                     label="Status"
-                                    data-vv-name="select"
+                                    data-vv-name="status"
                                     v-model="editedItem.is_active"
                                   ></v-select>
                                 </validation-provider>
                               </v-col>
                               <v-col cols="12" sm="6" md="6">
-                                <v-text-field
-                                  v-model="editedItem.lat"
-                                  label="Latitude"
-                                  :rules="latitudeRules"
-                                ></v-text-field>
+                                <validation-provider
+                                  v-slot="{ errors }"
+                                  name="Latitude"
+                                  rules="required|double"
+                                >
+                                  <v-text-field
+                                    v-model="editedItem.lat"
+                                    label="Latitude"
+                                    :error-messages="errors"
+                                  ></v-text-field>
+                                </validation-provider>
                               </v-col>
                               <v-col cols="12" sm="6" md="6">
-                                <v-text-field
-                                  v-model="editedItem.long"
-                                  label="Longitude"
-                                  :rules="longitudeRules"
-                                ></v-text-field>
+                                <validation-provider
+                                  v-slot="{ errors }"
+                                  name="Longitude"
+                                  rules="required|double"
+                                >
+                                  <v-text-field
+                                    v-model="editedItem.long"
+                                    label="Longitude"
+                                    :error-messages="errors"
+                                  ></v-text-field>
+                                </validation-provider>
                               </v-col>
                             </v-row>
                           </v-container>
@@ -111,14 +140,7 @@
                           >
                             Cancel
                           </v-btn>
-                          <v-btn
-                            color="teal"
-                            dark
-                            type="submit"
-                            :disabled="invalid"
-                          >
-                            Save
-                          </v-btn>
+                          <v-btn color="primary" type="submit"> Save </v-btn>
                         </v-card-actions>
                       </v-form>
                     </validation-observer>
@@ -228,7 +250,7 @@
 </template>
 
 <script>
-import { required, regex } from "vee-validate/dist/rules";
+import { required, double } from "vee-validate/dist/rules";
 import {
   extend,
   ValidationObserver,
@@ -244,9 +266,9 @@ extend("required", {
   message: "{_field_} can not be empty",
 });
 
-extend("regex", {
-  ...regex,
-  message: "{_field_} {_value_} does not match {regex}",
+extend("double", {
+  ...double,
+  message: "Invalid {_field_} value",
 });
 
 export default {
@@ -254,7 +276,6 @@ export default {
   data: () => ({
     qrcodeValue: "",
     size: 180,
-    valid: true,
     dialog: false,
     dialogQrcode: false,
     dialogDelete: false,
@@ -266,11 +287,10 @@ export default {
       { text: "Actions", align: "center", value: "actions", sortable: false },
     ],
     status: [
-      { state: "Active", abbr: "1" },
-      { state: "Inactive", abbr: "0" },
+      { state: "Active", abbr: 1 },
+      { state: "Inactive", abbr: 0 },
     ],
     sensor: ["Turbidity", "Suhu", "LDR", "Flow"],
-    senders: [],
     editedIndex: -1,
     device: {},
     editedItem: {
@@ -291,17 +311,17 @@ export default {
       lat: "",
       long: "",
     },
-    nameRules: [(v) => !!v || "Name is required"],
-    senderRules: [(v) => !!v || "Sender is required"],
-    sensorRules: [(v) => !!v || "Sensor is required"],
-    latitudeRules: [
-      (v) => !!v || "Langitude is required",
-      (v) => /^-?\d+(\.\d+)?$/.test(v) || "Invalid input",
-    ],
-    longitudeRules: [
-      (v) => !!v || "Longitude is required",
-      (v) => /^-?\d+(\.\d+)?$/.test(v) || "Invalid input",
-    ],
+    // nameRules: [(v) => !!v || "Name is required"],
+    // senderRules: [(v) => !!v || "Sender is required"],
+    // sensorRules: [(v) => !!v || "Sensor is required"],
+    // latitudeRules: [
+    //   (v) => !!v || "Langitude is required",
+    //   (v) => /^-?\d+(\.\d+)?$/.test(v) || "Invalid input",
+    // ],
+    // longitudeRules: [
+    //   (v) => !!v || "Longitude is required",
+    //   (v) => /^-?\d+(\.\d+)?$/.test(v) || "Invalid input",
+    // ],
   }),
 
   components: {
@@ -374,6 +394,7 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
+      this.$refs.observer.reset()
     },
 
     closeQrcode() {
@@ -389,25 +410,21 @@ export default {
     },
 
     save() {
-      this.$refs.observer.validate();
-      if (this.$refs.form.validate()) {
-        let device = {
-          id: this.editedItem.id,
-          device_id: this.editedItem.device_id,
-          sender_id: this.editedItem.sender_id,
-          sensor_id: this.editedItem.sensor_id,
-          is_active: this.editedItem.is_active == "Active" ? 1 : 0,
-          lat: this.editedItem.lat,
-          long: this.editedItem.long,
-        };
-
-        if (this.editedIndex > -1) {
-          this.$store.dispatch("device/UPDATE_DEVICE", device);
-        } else {
-          this.$store.dispatch("device/CREATE_DEVICE", device);
-        }
-        this.close();
+      let device = {
+        id: this.editedItem.id,
+        device_id: this.editedItem.device_id,
+        sender_id: this.editedItem.sender_id,
+        sensor_id: this.editedItem.sensor_id,
+        is_active: this.editedItem.is_active,
+        lat: this.editedItem.lat,
+        long: this.editedItem.long,
+      };
+      if (this.editedIndex > -1) {
+        this.$store.dispatch("device/UPDATE_DEVICE", device);
+      } else {
+        this.$store.dispatch("device/CREATE_DEVICE", device);
       }
+      this.close();
     },
 
     navigateDeviceDetail(item) {

@@ -64,6 +64,7 @@ const actions = {
       .finally(() => context.commit("SET_LOADING", false));
   },
 
+  //create device
   CREATE_DEVICE: ({ dispatch, commit }, device) => {
     commit("SET_LOADING", true);
     Device.createDevice(device)
