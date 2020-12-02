@@ -52,13 +52,13 @@ export default {
       if (this.$refs.form.validate()) {
         await axios({
           method: "GET",
-          url: '/api/get-client',
+          url: 'http://127.0.0.1:8000/api/get-client',
         })
           .then((res) => {
             this.client_secret = res.data.data.secret;
             axios({
               method: "POST",
-              url: '/oauth/token',
+              url: 'http://127.0.0.1:8000/oauth/token',
               data: {
                 grant_type: 'password',
                 client_id: "2",
@@ -67,9 +67,7 @@ export default {
                 password: this.password
               }
             }).then((res) => {
-              console.log(res);
               localStorage.setItem('token', res.data.access_token);
-              this.$store.dispatch('user', res.data)
               this.$router.push('/dashboard');
             }).catch((err) => {
               console.log('err' + err);

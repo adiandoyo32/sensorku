@@ -10,17 +10,28 @@
         {{ successMsg.data.device_id }} {{ successMsg.message }}
       </v-alert>
       <v-card>
+        <v-card-title>
+          <v-spacer></v-spacer>
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+        </v-card-title>
         <v-card-text>
           <v-data-table
             fixed-header
             height="350"
             :headers="headers"
-            :items="deviceList"
+            :items="userList"
             :loading="loading"
+            :search="search"
           >
             <template v-slot:top>
               <v-toolbar flat>
-                <v-toolbar-title>Devices</v-toolbar-title>
+                <v-toolbar-title>Users</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-dialog v-model="dialog" persistent max-width="500px">
                   <template v-slot:activator="{ on, attrs }">
@@ -31,7 +42,7 @@
                       v-bind="attrs"
                       v-on="on"
                     >
-                      New Device
+                      New User
                     </v-btn>
                   </template>
                   <v-card class="pa-5">
@@ -39,7 +50,7 @@
                       ref="observer"
                       v-slot="{ handleSubmit }"
                     >
-                      <v-form @submit.prevent="handleSubmit(save)">
+                      <v-form @submit.prevent="handleSubmit(submit)">
                         <v-card-title>
                           <span class="headline">{{ formTitle }}</span>
                         </v-card-title>
@@ -50,13 +61,37 @@
                               <v-col cols="12">
                                 <validation-provider
                                   v-slot="{ errors }"
-                                  name="Device Name"
+                                  name="Name"
                                   rules="required"
+                                >
+                                  <v-text-field
+                                    v-model="editedItem.name"
+                                    label="Name"
+                                    :error-messages="errors"
+                                    required
+                                  ></v-text-field>
+                                </validation-provider>
+                                <validation-provider
+                                  v-slot="{ errors }"
+                                  name="Email"
+                                  rules="required|email"
+                                >
+                                  <v-text-field
+                                    v-model="editedItem.email"
+                                    label="Email"
+                                    :error-messages="errors"
+                                    required
+                                  ></v-text-field>
+                                </validation-provider>
+                                <validation-provider
+                                  v-slot="{ errors }"
+                                  name="Password"
+                                  rules="required|min:6|confirmed:confirmation"
                                   v-if="editedIndex === -1"
                                 >
                                   <v-text-field
-                                    v-model="editedItem.device_id"
-                                    label="Device Name"
+                                    v-model="editedItem.password"
+                                    label="Password"
                                     :error-messages="errors"
                                     required
                                     v-if="editedIndex === -1"
@@ -64,67 +99,17 @@
                                 </validation-provider>
                                 <validation-provider
                                   v-slot="{ errors }"
-                                  name="Sender"
-                                  rules="required"
+                                  name="Confirmation"
+                                  rules=""
+                                  vid="confirmation"
+                                  v-if="editedIndex === -1"
                                 >
                                   <v-text-field
-                                    v-model="editedItem.sender_id"
-                                    label="Sender"
+                                    v-model="editedItem.password_confirmation"
+                                    label="Confirmation"
                                     :error-messages="errors"
                                     required
-                                  ></v-text-field>
-                                </validation-provider>
-                                <validation-provider
-                                  v-slot="{ errors }"
-                                  name="Sensor"
-                                  rules="required"
-                                >
-                                  <v-text-field
-                                    v-model="editedItem.sensor_id"
-                                    label="Sensor"
-                                    :error-messages="errors"
-                                    required
-                                  ></v-text-field>
-                                </validation-provider>
-                                <validation-provider
-                                  v-slot="{ errors }"
-                                  name="Status"
-                                  rules="required"
-                                >
-                                  <v-select
-                                    :items="status"
-                                    :error-messages="errors"
-                                    item-text="state"
-                                    item-value="abbr"
-                                    label="Status"
-                                    data-vv-name="status"
-                                    v-model="editedItem.is_active"
-                                  ></v-select>
-                                </validation-provider>
-                              </v-col>
-                              <v-col cols="12" sm="6" md="6">
-                                <validation-provider
-                                  v-slot="{ errors }"
-                                  name="Latitude"
-                                  rules="required|double"
-                                >
-                                  <v-text-field
-                                    v-model="editedItem.lat"
-                                    label="Latitude"
-                                    :error-messages="errors"
-                                  ></v-text-field>
-                                </validation-provider>
-                              </v-col>
-                              <v-col cols="12" sm="6" md="6">
-                                <validation-provider
-                                  v-slot="{ errors }"
-                                  name="Longitude"
-                                  rules="required|double"
-                                >
-                                  <v-text-field
-                                    v-model="editedItem.long"
-                                    label="Longitude"
-                                    :error-messages="errors"
+                                    v-if="editedIndex === -1"
                                   ></v-text-field>
                                 </validation-provider>
                               </v-col>
@@ -149,36 +134,10 @@
                   </v-card>
                 </v-dialog>
 
-                <v-dialog v-model="dialogQrcode" max-width="290">
-                  <v-card>
-                    <v-card-title class="headline"> QrCode </v-card-title>
-                    <v-card-text>
-                      <div class="text-center mt-4">
-                        <qrcode-vue
-                          :value="qrcodeValue"
-                          :size="size"
-                          level="H"
-                        ></qrcode-vue>
-                      </div>
-                    </v-card-text>
-
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn
-                        color="green darken-1"
-                        text
-                        @click="dialogQrcode = false"
-                      >
-                        Close
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
-
                 <v-dialog v-model="dialogDelete" max-width="500px">
                   <v-card>
                     <v-card-title class="headline"
-                      >Are you sure you want to delete this item?</v-card-title
+                      >Are you sure you want to delete this user?</v-card-title
                     >
                     <v-card-actions>
                       <v-spacer></v-spacer>
@@ -212,17 +171,9 @@
                 color="teal lighten-2"
                 small
                 class="mr-4"
-                @click="navigateDeviceDetail(item)"
+                @click="navigateUserDetail(item)"
               >
                 mdi-information-outline
-              </v-icon>
-              <v-icon
-                color="lime darken-2"
-                small
-                class="mr-4"
-                @click="openQrcode(item)"
-              >
-                mdi-qrcode-scan
               </v-icon>
               <v-icon
                 color="blue lighten-2"
@@ -242,7 +193,7 @@
               </v-icon>
             </template>
             <template v-slot:no-data>
-              <v-btn color="primary" @click="initialize"> Reset </v-btn>
+              <v-btn color="primary"> Reset </v-btn>
             </template>
           </v-data-table>
         </v-card-text>
@@ -252,130 +203,109 @@
 </template>
 
 <script>
-import { required, double } from "vee-validate/dist/rules";
+import { required, email, min, confirmed } from "vee-validate/dist/rules";
 import {
   extend,
   ValidationObserver,
   ValidationProvider,
   setInteractionMode,
 } from "vee-validate";
-import QrcodeVue from "qrcode.vue";
 
 setInteractionMode("eager");
 
 extend("required", {
   ...required,
-  message: "{_field_} can not be empty",
+  message: "{_field_} can not be empty.",
 });
 
-extend("double", {
-  ...double,
-  message: "Invalid {_field_} value",
+extend("email", {
+  ...email,
+  message: "{_field_} field must be a valid email.",
+});
+
+extend("min", {
+  ...min,
+  message: "Use 6 characters or more for your password.",
+});
+
+extend("confirmed", {
+  ...confirmed,
+  message: "{_field_} confirmation didn't match. Try again.",
 });
 
 export default {
-  name: "DeviceTable",
-  data: () => ({
-    qrcodeValue: "",
-    size: 180,
-    dialog: false,
-    dialogQrcode: false,
-    dialogDelete: false,
-    headers: [
-      { text: "Name", align: "start", sortable: false, value: "device_id" },
-      { text: "Sender", value: "sender_id", sortable: false },
-      { text: "Sensor", value: "sensor_id", sortable: false },
-      { text: "Status", align: "center", value: "is_active" },
-      { text: "Actions", align: "center", value: "actions", sortable: false },
-    ],
-    status: [
-      { state: "Active", abbr: 1 },
-      { state: "Inactive", abbr: 0 },
-    ],
-    sensor: ["Turbidity", "Suhu", "LDR", "Flow"],
-    editedIndex: -1,
-    device: {},
-    editedItem: {
-      id: "",
-      device_id: "",
-      sender_id: "",
-      sensor_id: "",
-      is_active: "",
-      lat: "",
-      long: "",
-    },
-    defaultItem: {
-      id: "",
-      device_id: "",
-      sender_id: "",
-      sensor_id: "",
-      is_active: "",
-      lat: "",
-      long: "",
-    },
-  }),
-
+  name: "User",
   components: {
-    QrcodeVue,
     ValidationProvider,
     ValidationObserver,
   },
-
-  watch: {
-    dialog(val) {
-      val || this.close();
-    },
-    dialogQrcode(val) {
-      val || this.closeQrcode();
-    },
-    dialogDelete(val) {
-      val || this.closeDelete();
-    },
+  data() {
+    return {
+      search: "",
+      dialog: false,
+      dialogDelete: false,
+      headers: [
+        { text: "Name", align: "start", value: "name" },
+        { text: "Email", value: "email" },
+        { text: "Picture", value: "profile_picture" },
+        { text: "Actions", align: "center", value: "actions", sortable: false },
+      ],
+      editedIndex: -1,
+      editedItem: {
+        id: "",
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
+      },
+      defaultItem: {
+        id: "",
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
+      },
+    };
   },
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "New Device" : "Edit Device";
-    },
-    deviceList() {
-      return this.$store.getters["device/DEVICES"];
+      return this.editedIndex === -1 ? "New User" : "Edit User";
     },
     loading() {
-      return this.$store.getters["device/IS_LOADING"];
+      return this.$store.getters["user/IS_LOADING"];
+    },
+    userList() {
+      return this.$store.getters["user/USERS"];
     },
     successMsg() {
-      return this.$store.getters["device/SUCCESS_MESSAGE"];
+      return this.$store.getters["user/SUCCESS_MESSAGE"];
     },
     errMsg() {
-      return this.$store.getters["device/ERR_MESSAGE"];
+      return this.$store.getters["user/ERR_MESSAGE"];
     },
   },
 
   mounted() {
-    this.$store.dispatch("device/FETCH_DEVICES");
+    this.$store.dispatch("user/FETCH_USERS");
   },
 
   methods: {
-    openQrcode(item) {
-      this.qrcodeValue = item.device_id;
-      this.dialogQrcode = true;
-    },
-
     editItem(item) {
-      this.editedIndex = this.$store.getters["device/DEVICES"].indexOf(item);
+      this.editedIndex = this.$store.getters["user/USERS"].indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.$store.getters["device/DEVICES"].indexOf(item);
+      this.editedIndex = this.$store.getters["user/USERS"].indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
 
     deleteItemConfirm() {
-      let deviceId = this.editedItem.device_id;
-      this.$store.dispatch("device/DELETE_DEVICE", deviceId);
+      let userId = this.editedItem.id;
+      this.$store.dispatch("user/DELETE_USER", userId);
       this.closeDelete();
     },
 
@@ -388,10 +318,6 @@ export default {
       this.dialog = false;
     },
 
-    closeQrcode() {
-      this.dialogQrcode = false;
-    },
-
     closeDelete() {
       this.dialogDelete = false;
       this.$nextTick(() => {
@@ -400,30 +326,40 @@ export default {
       });
     },
 
-    save() {
-      let device = {
-        id: this.editedItem.id,
-        device_id: this.editedItem.device_id,
-        sender_id: this.editedItem.sender_id,
-        sensor_id: this.editedItem.sensor_id,
-        is_active: this.editedItem.is_active,
-        lat: this.editedItem.lat,
-        long: this.editedItem.long,
-      };
-      if (this.editedIndex > -1) {
-        this.$store.dispatch("device/UPDATE_DEVICE", device);
-      } else {
-        this.$store.dispatch("device/CREATE_DEVICE", device);
-      }
-      this.close();
+    navigateUserDetail(item) {
+      let userId = item.id;
+      this.$router.push({
+        name: "UserDetail",
+        params: { id: userId },
+      });
     },
 
-    navigateDeviceDetail(item) {
-      let deviceId = item.device_id;
-      this.$router.push({
-        name: "DeviceDetail",
-        params: { id: deviceId },
-      });
+    submit() {
+      let user = {
+        id: this.editedItem.id,
+        name: this.editedItem.name,
+        email: this.editedItem.email,
+        password: this.editedItem.password,
+        password_confirmation: this.editedItem.password_confirmation
+      };
+      if (this.editedIndex > -1) {
+        this.$store.dispatch("user/UPDATE_USER", user);
+      } else {
+        this.$store.dispatch("user/CREATE_USER", user);
+      }
+      this.close();
+    }
+  },
+
+  watch: {
+    dialog(val) {
+      val || this.close();
+    },
+    dialogQrcode(val) {
+      val || this.closeQrcode();
+    },
+    dialogDelete(val) {
+      val || this.closeDelete();
     },
   },
 };
