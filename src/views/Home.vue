@@ -1,91 +1,6 @@
 <template>
   <div>
-    <v-row>
-      <v-col lg="3" md="4" sm="12" cols="12">
-        <v-card>
-          <v-card-text class="m-0">
-            <v-list-item three-line>
-              <v-list-item-content>
-                <v-list-item-title>
-                  <span class="title font-weight-black"> 10 </span>
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  <span class=""> Active Devices </span>
-                </v-list-item-subtitle>
-              </v-list-item-content>
-              <v-list-item-avatar size="56">
-                <v-icon size="56" color="teal lighten-2">
-                  mdi-access-point
-                </v-icon>
-              </v-list-item-avatar>
-            </v-list-item>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col lg="3" md="4" sm="12" cols="12">
-        <v-card>
-          <v-card-text class="m-0">
-            <v-list-item three-line>
-              <v-list-item-content>
-                <v-list-item-title>
-                  <span class="title font-weight-black"> 100 </span>
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  <span class=""> Inactive Devices </span>
-                </v-list-item-subtitle>
-              </v-list-item-content>
-              <v-list-item-avatar size="56">
-                <v-icon size="56" color="red lighten-2">
-                  mdi-access-point
-                </v-icon>
-              </v-list-item-avatar>
-            </v-list-item>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col lg="3" md="4" sm="12" cols="12">
-        <v-card>
-          <v-card-text class="m-0">
-            <v-list-item three-line>
-              <v-list-item-content>
-                <v-list-item-title>
-                  <span class="title font-weight-black"> 100 </span>
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  <span> Users </span>
-                </v-list-item-subtitle>
-              </v-list-item-content>
-              <v-list-item-avatar size="56">
-                <v-icon size="56" color="blue-grey lighten-2">
-                  mdi-account-supervisor
-                </v-icon>
-              </v-list-item-avatar>
-            </v-list-item>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col lg="3" md="4" sm="12" cols="12">
-        <v-card>
-          <v-card-text class="m-0">
-            <v-list-item three-line>
-              <v-list-item-content>
-                <v-list-item-title>
-                  <span class="title font-weight-black"> 1000 </span>
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  <span class=""> Device Logs </span>
-                </v-list-item-subtitle>
-              </v-list-item-content>
-              <v-list-item-avatar size="56">
-                <v-icon size="56" color="blue lighten-2">
-                  mdi-android-messages
-                </v-icon>
-              </v-list-item-avatar>
-            </v-list-item>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+    <CardStatus />
     <v-row>
       <v-col cols="12">
         <v-card>
@@ -102,16 +17,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col sm="6" md="4" lg="4" cols="12">
-        <v-card>
-          <v-card-title> Devices Chart </v-card-title>
-          <v-card-text>
-            <v-row no-gutters>
-              <pie-chart :data="pieData"></pie-chart>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-col>
+      <DevicePieChart />
       <v-col sm="6" md="8" lg="8" cols="12">
         <v-card>
           <v-card-title> Logs Chart </v-card-title>
@@ -133,23 +39,19 @@
 
 <script>
 // import Test from "@/components/dashboard/GChart.vue";
-// import PieChart from "@/components/dashboard/PieChart.vue";
+import DevicePieChart from "@/components/dashboard/DevicePieChart.vue";
 // import Map from "@/components/shared/Map.vue";
+import CardStatus from "@/components/dashboard/CardStatus";
 
 export default {
   name: "Home",
   components: {
+    CardStatus,
+    DevicePieChart,
     // Map,
-    // PieChart,
   },
   data() {
     return {
-      pieData: [
-        ["LDR", 7],
-        ["Suhu", 10],
-        ["Turbidity", 5],
-        ["Flow", 5],
-      ],
       chartData: [
         {
           name: "Devices",

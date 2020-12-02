@@ -40,10 +40,10 @@ export default {
       });
     },
   
-    fetchDeviceLogs(deviceId) {
+    fetchUserDevices(userId) {
       return service({
         method: "GET",
-        url: `${PATH}/${deviceId}/data`,
+        url: `${PATH}/${userId}/devices`,
       });
     },
   };

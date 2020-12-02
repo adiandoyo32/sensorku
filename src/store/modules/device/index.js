@@ -139,7 +139,9 @@ const actions = {
       .then((res) => {
         context.commit("SET_DEVICE_LOGS", res.data.data);
       })
-      .catch((error) => console.log(error))
+      .catch((error) => {
+        console.log(error);
+      })
       .finally(() => context.commit("SET_LOADING", false));
   },
 };

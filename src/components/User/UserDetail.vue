@@ -14,12 +14,19 @@
           </v-card-text>
         </v-card>
       </v-col>
+      <v-col cols="12">
+        <UserDevice :userId="userId" />
+      </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
+import UserDevice from "./UserDevice"
 export default {
+  components: {
+    UserDevice
+  },
   data() {
     return {
       userId: this.$route.params.id,

@@ -6,6 +6,7 @@ const state = {
   isLoading: true,
   successMessage: null,
   errMessage: null,
+  userDevice: [],
 };
 
 const getters = {
@@ -24,6 +25,9 @@ const getters = {
   ERR_MESSAGE: (state) => {
     return state.errMessage;
   },
+  USER_DEVICES: (state) => {
+    return state.userDevice;
+  },
 };
 
 const mutations = {
@@ -41,6 +45,9 @@ const mutations = {
   },
   SET_ERR_MESSAGE: (state, payload) => {
     state.errMessage = payload;
+  },
+  SET_USER_DEVICES: (state, payload) => {
+    state.userDevice = payload;
   },
 };
 
@@ -124,6 +131,19 @@ const actions = {
         console.log("err", err);
       })
       .finally(() => commit("SET_LOADING", false));
+  },
+
+  FETCH_USER_DEVICES: (context, userId) => {
+    context.commit("SET_LOADING", true);
+    User.fetchUserDevices(userId)
+      .then((res) => {
+        console.log(res);
+        context.commit("SET_USER_DEVICES", res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => context.commit("SET_LOADING", false));
   },
 };
 
