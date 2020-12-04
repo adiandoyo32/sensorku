@@ -28,6 +28,24 @@ const getters = {
   ERR_MESSAGE: (state) => {
     return state.errMessage;
   },
+  DEVICE_LOG_DATASET: (state) => {
+    // const date = state.deviceLogs.map(logs => {
+    //   return logs.created_at;
+    // });
+    // const value = state.deviceLogs.map(logs => {
+    //   return logs.value;
+    // });
+    // let data = {
+    //   date,
+    //   value
+    // };
+    // return data;
+    console.log('log data', state.deviceLogs);
+    const dataset = state.deviceLogs.map(logs => {
+      return { x: logs.created_at, y: logs.value }
+    })
+    return dataset;
+  },
 };
 
 const mutations = {
@@ -135,6 +153,7 @@ const actions = {
   },
 
   FETCH_DEVICE_LOGS: (context, deviceId) => {
+    console.log('logs');
     Device.fetchDeviceLogs(deviceId)
       .then((res) => {
         context.commit("SET_DEVICE_LOGS", res.data.data);

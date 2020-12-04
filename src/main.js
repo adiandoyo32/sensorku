@@ -5,7 +5,7 @@ import NoSidebar from "./components/layouts/NoSidebar.vue";
 import vuetify from "./plugins/vuetify";
 import Chartkick from "vue-chartkick";
 import Chart from "chart.js";
-import VueApexCharts from "vue-apexcharts";
+// import VueApexCharts from "vue-apexcharts";
 import router from "./router";
 import store from "./store";
 import * as VueGoogleMaps from "vue2-google-maps";
@@ -25,7 +25,7 @@ Vue.use(VueGoogleMaps, {
 
 Vue.component("default-layout", Default);
 Vue.component("no-sidebar-layout", NoSidebar);
-Vue.component("apexchart", VueApexCharts);
+// Vue.component("apexchart", VueApexCharts);
 
 Vue.config.productionTip = false;
 

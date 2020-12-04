@@ -38,10 +38,10 @@
 </template>
 
 <script>
-// import Test from "@/components/dashboard/GChart.vue";
-import DevicePieChart from "@/components/dashboard/DevicePieChart.vue";
-// import Map from "@/components/shared/Map.vue";
 import CardStatus from "@/components/dashboard/CardStatus";
+import DevicePieChart from "@/components/dashboard/DevicePieChart.vue";
+// import Test from "@/components/dashboard/GChart.vue";
+// import Map from "@/components/shared/Map.vue";
 
 export default {
   name: "Home",
